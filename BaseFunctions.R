@@ -18,31 +18,56 @@ TFIM <- function(lat, lon, duration, start_date, end_date, met = NULL, satellite
   day <- seq(as.Date(start_date), as.Date(end_date), by = "days")
   AQ_data <- data.frame(day, "0")
   AQ_data <- AQ_data %>%
+    
     mutate("00" = 0,
+           
            "06" =0,
+           
            "12" = 0,
-           "18" = 0,
-           "X.00." = NULL) %>%
-    pivot_longer(cols = c("00", "06", "12", "18"), names_to = "Hour", values_to = "bop") %>%
+           
+           "18" = 0) 
+  AQ_data <- select(AQ_data, -'X.0.')  
+  
+  AQ_data <-  pivot_longer(AQ_data, cols = c("00", "06", "12", "18"), names_to = "Hour", values_to = "bop") %>%
+    
     mutate(date = paste(as.character(day), Hour, sep = " "),
-           date = as.POSIXct(date, format = "%Y-%m-%d %H:%M:%S")) %>%
-    select(-`X.0.`) %>%
+           
+           date = as.POSIXct(date, format = "%Y-%m-%d %H")) %>%
+    
     timeAverage(avg.time = "6 hour") %>%
-    mutate(Hour = format(as.POSIXct(strptime(date,"%Y-%m-%d %H:%M:%S",tz="")) ,format = "%H"),
-           Hour = as.numeric(Hour),
-           day = format(as.POSIXct(strptime(date,"%Y-%m-%d %H:%M:%S",tz="")) ,format = "%Y-%m-%d"),
+    
+    mutate(date2 = date) %>%
+    separate(col = date, into = c("date", "Hour"),sep = " ")  %>%
+    mutate(Hour = replace_na(Hour, "00:00:00"), 
+           Hour = case_when(Hour == "00:00:00" ~ 00,
+                            Hour == "06:00:00" ~ 06,
+                            Hour == "12:00:00" ~ 12,
+                            Hour == "18:00:00" ~ 18), 
+           
            day = as.Date(day,"%Y-%m-%d", tz= "UTC"),
+           
            Number_of_Fires = as.numeric(""),
+           
            FRP = as.numeric(""),
+           
            Fire_Influence = as.character(""),
+           
            intercept_time = as.numeric(""),
+           
            Hour = case_when(Hour == 24~0,
+                            
                             Hour == 23~0,
+                            
                             Hour == 5~6,
+                            
                             Hour == 17~18,
+                            
                             Hour == 11~12,
+                            
                             Hour == 23~0,
-                            Hour %in% c(0, 6, 12, 18)~Hour))
+                            
+                            Hour %in% c(0, 6, 12, 18)~Hour)) %>%
+    select(-date2)
   
   #defining variables for HYSPLIT
   for (row in 1:NROW(AQ_data)){
