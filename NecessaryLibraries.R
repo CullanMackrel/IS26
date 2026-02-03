@@ -1,0 +1,12 @@
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(devtools)
+library(splitr)
+library(openair)
+library(withr)
+options(timeout=200)
+setwd("C:/Users/culla/Documents/data")
+
+ Import_FIRMS("VIIRS")
+TFIM(lat = 49.70033, lon = -112.93828, duration = 72, start_date = "2019/06/02", end_date = "2019/07/02", met = "nam12") 
