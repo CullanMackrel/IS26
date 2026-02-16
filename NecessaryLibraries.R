@@ -9,4 +9,4 @@ options(timeout=200)
 setwd("C:/Users/culla/Documents/data")
 
  Import_FIRMS("VIIRS")
-TFIM(lat = 49.70033, lon = -112.93828, duration = 72, start_date = "2019/06/02", end_date = "2019/07/02", met = "nam12") 
+TFIM(lat = 55.582983, lon = -110.973061, duration = 72, start_date = "2019/02/09", end_date = "2024/12/31", met = "nam12") 

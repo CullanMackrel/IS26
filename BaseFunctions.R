@@ -48,7 +48,7 @@ TFIM <- function(lat, lon, duration, start_date, end_date, met = NULL, satellite
                             Hour == "19:00:00" ~ 18,
                             Hour == "01:00:00" ~ 00),
            
-           day = as.Date(day,"%Y-%m-%d", tz= "UTC")) 
+           day = as.Date(day,"%Y-%m-%d", tz= "UTC"),
   
            
            Number_of_Fires = as.numeric(""),
