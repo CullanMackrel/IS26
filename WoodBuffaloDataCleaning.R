@@ -11,14 +11,22 @@ WBH2S <- read_csv("WBH2S(Data).csv", skip = 1, n_max = 227954)
 select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous Ambient Air Quality Monitoring Program`, `...30`, `...31`, `...32`, `...33`, `...34`)) %>%
    mutate(across(-date, as.numeric)) %>%
    select(`date`, everything()) %>%
+   
    separate(date,
             into = c("date", "Time"),
             sep = " ") %>%
+   
    rename(Hour = Time) %>%
+   
    unite("date", c("date", "Hour"), sep = " " ) %>%
    arrange(date) %>%
+   
    mutate(date = paste(as.character(date), StdWBH2S$Hour, sep = " "),
-          date = as.POSIXct(date, format = "%Y-%m-%d %H")) %>%
+          date = as.POSIXct(date, format = "%Y-%m-%d %H", tz = "MST"),
+          date = with_tz(date, tz = "UTC")) %>%
+   slice(-(1:4)) %>%
+   
+ 
    timeAverage(avg.time = "6 hour") %>%
    separate(col = date, into = c("date", "Hour"),sep = " ")  %>%
    mutate(Hour = replace_na(Hour, "00:00:00"), 
@@ -30,11 +38,13 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
                            Hour == "13:00:00" ~ 12,
                            Hour == "19:00:00" ~ 18,
                            Hour == "01:00:00" ~ 00)) %>%
+   s
           
-          mutate(date = force_tzs(date,tzones = "UTC" ))
+      
  
 #Plotting
 H2SPlot <- StdWBH2S %>%
+  selectByDate(year = 2020:2025) %>%
    timePlot(pollutant = "AMS 4",
             group = TRUE,
             stack = TRUE,
