@@ -179,6 +179,7 @@ TFIM <- function(lat, lon, duration, start_date, end_date, met = NULL, satellite
 }
 
 
+
 TFIM_plot <- function(NAPS_ID, date, hour, duration, met = NULL){
   
   #Defining default meteorology, which is based on year
