@@ -3,7 +3,7 @@ WBH2S <- read_csv("WBH2S(Data).csv")
 
 #Cleaning up data
 WBH2S <- read_csv("WBH2S(Data).csv", skip = 1, n_max = 227954) 
- StdWBH2S <- WBH2S %>%
+ StdWBH2S <- WBH2S %>% 
   mutate( "date" = WBH2S$...1) %>%
    slice(-1) %>%
  select(-`...1`) %>%
@@ -37,8 +37,15 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
                            Hour == "07:00:00" ~ 06,
                            Hour == "13:00:00" ~ 12,
                            Hour == "19:00:00" ~ 18,
-                           Hour == "01:00:00" ~ 00)) %>%
-   s
+                           Hour == "01:00:00" ~ 00)) 
+ 
+#Pivoting data to long format
+ LongH2S <- StdWBH2S %>%
+   pivot_longer(cols = -c("date", "Hour"),
+                names_to = "Station",
+                values_to = "H2S Conc") 
+   group_by(LongH2S$Hour)
+ 
           
       
  
