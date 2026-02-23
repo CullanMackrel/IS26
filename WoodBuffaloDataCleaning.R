@@ -37,27 +37,68 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
                            Hour == "07:00:00" ~ 06,
                            Hour == "13:00:00" ~ 12,
                            Hour == "19:00:00" ~ 18,
-                           Hour == "01:00:00" ~ 00)) 
+                           Hour == "01:00:00" ~ 00)) %>%
+   mutate(date = as.POSIXct(date, format = "%Y-%m-%d")) %>%
+ unite(col = date,
+       c("date","Hour"),
+       sep = " ") 
+ 
+ #Specifying the two Stations I'll be looking at
+ StationH2S <- StdWBH2S %>%
+   select(date, `AMS 4`, `AMS 19`)
+ 
  
 #Pivoting data to long format
- LongH2S <- StdWBH2S %>%
-   pivot_longer(cols = -c("date", "Hour"),
+ LongH2S <- StationH2S %>%
+   pivot_longer(cols = -c("date"),
                 names_to = "Station",
-                values_to = "H2S Conc") 
-   group_by(LongH2S$Hour)
+                values_to = "H2SConc") 
+  
  
           
-      
+#Plotting With OpenAir
+H2SPlot <- LongH2S %>%
+  selectByDate(year = 2020) %>%
+   timePlot(pollutant = "H2SConc",
+   type = "Station",
+            lwd = 4, lty = 1,
+            group = TRUE) 
+timePlot(selectByDate(LongH2S, year = 2020),
+         pollutant = "H2SConC",
+         type = "Station",
+         y.relation = "free",
+         avg.time = "month")
  
-#Plotting
-H2SPlot <- StdWBH2S %>%
-  selectByDate(year = 2020:2025) %>%
-   timePlot(pollutant = "AMS 4",
-            group = TRUE,
-            stack = TRUE,
-            date.pad = TRUE) 
- 
- 
+
+
+#Plotting With ggplot
+#scatter plot
+ggplot(LongH2S %>% 
+         selectByDate(year = 2020, month = 7, day = 23),
+       aes(x = date, y = H2SConc, colour = Station)) + 
+      geom_point() + 
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90))
+
+#Violin Plot
+ggplot(LongH2S %>%
+         selectByDate(year = 2020, month = 7, day = 23),
+       aes(x = date, y = H2SConc, fill = Station)) +
+  geom_violin() + 
+  coord_flip() +
+  labs(x = "Station",
+       y = "H2S Concentration (ppb)")
+       
+ #Marginal Plot
+mP <- ggplot(data = LongH2S %>%
+         selectByDate(year = 2020, month = 7),
+       aes(x = date,
+           y = H2SConc,
+           colour = Station)) +
+  geom_point() +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90)) 
+
+  ggExtra::ggMarginal(mP, margins = "y", groupColour = TRUE, groupFill = TRUE) 
  
  
  
