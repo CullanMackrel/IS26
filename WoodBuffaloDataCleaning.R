@@ -74,11 +74,13 @@ timePlot(selectByDate(LongH2S, year = 2020),
 #Plotting With ggplot
 #scatter plot
 ggplot(LongH2S %>% 
-         selectByDate(year = 2020, month = 7, day = 23),
+         selectByDate(year = 2020),
        aes(x = date, y = H2SConc, colour = Station)) + 
       geom_point() + 
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 90))
+  labs(x = "date", y = "Concentration of Hydrogen Sulfide (ppb)", title = "H2S Concentration (ppb) Throughout 2020") +
+  geom_line() +
+  scale_x_date(labels = date)
+  theme_classic() 
 
 #Violin Plot
 ggplot(LongH2S %>%
