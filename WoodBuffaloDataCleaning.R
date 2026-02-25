@@ -72,15 +72,60 @@ timePlot(selectByDate(LongH2S, year = 2020),
 
 
 #Plotting With ggplot
-#scatter plot
-ggplot(LongH2S %>% 
+#Different Station's H2S Conc by month in 2020
+MonthPlot <- LongH2S %>%
+ 
+mutate(LongH2S, date = as.Date(LongH2S$date)) %>%
+timeAverage(avg.time = "month",
+            type = "Station")
+
+ggplot(MonthPlot %>% 
          selectByDate(year = 2020),
        aes(x = date, y = H2SConc, colour = Station)) + 
       geom_point() + 
-  labs(x = "date", y = "Concentration of Hydrogen Sulfide (ppb)", title = "H2S Concentration (ppb) Throughout 2020") +
-  geom_line() +
-  scale_x_date(labels = date)
+  labs(x = "Months Of 2020", y = "Concentration of Hydrogen Sulfide (ppb)", title = "H2S Concentration (ppb) Throughout 2020") +
+  scale_x_date(labels = date_format("%b"), breaks = "1 month") +
   theme_classic() 
+
+#Different Station's H2S Conc by month and by year from 2020-2025
+Year1Plot <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(date)) %>%
+  timeAverage(avg.time = "month",
+              type = "Station")
+
+ggplot(Year1Plot %>%
+         selectByDate(year = 2020:2024),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Years", 
+       y = "Concentration of Hydrogen Sulfide (ppb)",
+       title = "Monthly Average H2S Concentration (ppb) From 2020-2025") + 
+  scale_x_date(labels = date_format("%Y"), breaks = "1 year") +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+
+
+
+Year2Plot <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(date)) %>%
+  timeAverage(avg.time = "year",
+              type = "Station")
+
+ggplot(Year2Plot %>%
+         selectByDate(year = 2020:2024),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Years", 
+       y = "Concentration of Hydrogen Sulfide (ppb)",
+       title = "Yearly Average H2S Concentration (ppb) From 2020-2025") + 
+  scale_x_date(labels = date_format("%Y"), breaks = "1 year") +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+
+
+  
 
 #Violin Plot
 ggplot(LongH2S %>%
@@ -92,15 +137,25 @@ ggplot(LongH2S %>%
        y = "H2S Concentration (ppb)")
        
  #Marginal Plot
-mP <- ggplot(data = LongH2S %>%
-         selectByDate(year = 2020, month = 7),
-       aes(x = date,
-           y = H2SConc,
-           colour = Station)) +
+MarginalPlotdata <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(LongH2S$date)) %>%
+  timeAverage(avg.time = "month",
+              type = "Station")
+  
+MarginalPlot <- ggplot(MarginalPlotdata %>%
+         selectByDate(year = 2020),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Months", 
+       y = "Concentration of Hydrogen Sulfide (ppb)",
+       title = "Monthly Average H2S Concentration (ppb) in 2020") + 
+  scale_x_date(labels = date_format("%b"), breaks = "1 month") +
   geom_point() +
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90)) 
+  geom_line() +
+  theme_classic() 
+  
 
-  ggExtra::ggMarginal(mP, margins = "y", groupColour = TRUE, groupFill = TRUE) 
+ggExtra::ggMarginal(MarginalPlot, margins = "y", groupColour = TRUE, groupFill = TRUE) 
  
  
  
