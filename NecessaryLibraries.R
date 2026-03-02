@@ -7,8 +7,10 @@ library(openair)
 library(withr)
 library(readr)
 library(lubridate)
-options(timeout=750)
+library(scales)
+options(timeout=1000)
+setwd("E:\ ")
 setwd("C:/Users/culla/Documents/data")
-
  Import_FIRMS("VIIRS")
-TFIM(lat = 55.582983, lon = -110.973061, duration = 72, start_date = "2019/02/20", end_date = "2020/04/26", met = "nam12") 
+ 
+AQ_data <- TFIM(lat = 56.996265, lon = -111.59410167, duration = 72, start_date = "2020/01/01", end_date = "2020/12/31", met = "nam12", location = "AMS 4") 
