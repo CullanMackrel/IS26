@@ -10,7 +10,6 @@ library(lubridate)
 library(scales)
 options(timeout=1000)
 setwd("E:\ ")
-setwd("C:/Users/culla/Documents/data")
  Import_FIRMS("VIIRS")
  
 AQ_data <- TFIM(lat = 56.996265, lon = -111.59410167, duration = 72, start_date = "2020/01/01", end_date = "2020/12/31", met = "nam12", location = "AMS 4") 

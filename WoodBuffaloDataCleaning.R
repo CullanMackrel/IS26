@@ -157,62 +157,11 @@ MarginalPlot <- ggplot(MarginalPlotdata %>%
   
 
 ggExtra::ggMarginal(MarginalPlot, margins = "y", groupColour = TRUE, groupFill = TRUE) 
- 
- 
- 
- #Plotting with Fire Data
-
- FireH2S <- LongH2S %>%
-   separate(col = date, into = c("date", "hour"), sep = " ") %>%
-   mutate(date = as.Date(date)) %>%
-   timeAverage(avg.time = "month",
-               type = "Station") %>%
-   selectByDate(year = 2020) 
-   pivot_wider(names_from = Station,
-               values_from = H2SConc) %>%
-   mutate(FireNumber = FiresWithInfluence$Number_of_Fires) %>%
-   pivot_longer(cols = c("AMS 19", "AMS 4", "FireNumber"),
-                names_to = "Series",
-                values_to = "Values")
-
- ggplot(FireH2S, aes(y = Values, x = date, colour = Series)) +
-   geom_point() +
-   geom_line()
- 
- 
- 
- 
- 
- #Forming An H2S conc and fire influence table
- StationMerge <- StationH2S %>%
-   separate(col = date, into = c("date", "hour"), sep = " ") %>%
-   selectByDate(year = 2020) %>%
-   unite(col = date,
-         c("date", "hour"),
-         sep = " ")
- AQMerge <- rename(AQ_data, hour = Hour) %>%
-   mutate(hour = as.character(hour)) %>%
-   unite(col = date,
-         c("date", "hour"),
-         sep = " ")
-
- MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
-  pivot_longer(cols = c("AMS 4", "AMS 19"),
-               names_to = "Station",
-               values_to = "H2SConc")
 
 
 
-#Bubble plot with fire influence 
-BubblePlot <- MergedData %>%
-  separate(col = date, into = c("date", "hour"), sep = " ") %>%
-  mutate(date = as.Date(date)) 
 
- 
- ggplot(BubblePlot, aes(x = date, y = H2SConc, size = Fire_Influence, colour = Station)) +
-   geom_point(alpha = 0.5)
 
- 
  
 
  
