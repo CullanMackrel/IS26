@@ -3,7 +3,8 @@
 Prior to the use of these scripts, both VIIRS Satellite data and Alberta Oil Sands Air Monitoring Station data must be downloaded, which can be done from the links provided below:
 + VIIRS Satellite Data can be downloaded [here](https://firms.modaps.eosdis.nasa.gov/download/)
 + Oil Sands Data can be downloaded [here](https://wbea.org/data/continuous-monitoring-data/)
-To avoid downloading unnecessary VIIRS data, navigate to the map tool and highlight the specific region to receive data for that region alone.
+
+To avoid downloading unnecessary VIIRS data, open the map tool and highlight the specific region to receive data for that region only. For the oil sands data, select "One Parameter/Multiple Stations" with H2S as the parameter, and select the desired data time frame (ensure this falls within the VIIRS data time frame).
 
 
 
