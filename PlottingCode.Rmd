@@ -1,0 +1,208 @@
+---
+title: "Plots"
+author: "Cullan Mackrel"
+date: "2026-03-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## AMS 4 & 19 H2S Mixing Ratio by month in 2020
+
+```{r}
+setwd("C:/Users/culla/Documents/data")
+MonthPlot <- LongH2S %>%
+ 
+mutate(LongH2S, date = as.Date(LongH2S$date)) %>%
+timeAverage(avg.time = "month",
+            type = "Station")
+
+ggplot(MonthPlot %>% 
+         selectByDate(year = 2020),
+       aes(x = date, y = H2SConc, colour = Station)) + 
+      geom_point() + 
+  geom_line() +
+  labs(x = "Months Of 2020", y = "Mixing Ratio (ppb)", title = "H2S Mixing Ratio (ppb) Throughout 2020") +
+  scale_x_date(labels = date_format("%b"), breaks = "1 month") +
+  theme_classic() 
+```
+
+## AMS 4 & 19 Marginal Plot of H2S Mixing Ratio by month in 2020
+
+```{r}
+setwd("C:/Users/culla/Documents/data")
+MarginalPlotdata <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(LongH2S$date)) %>%
+  timeAverage(avg.time = "month",
+              type = "Station")
+  
+MarginalPlot <- ggplot(MarginalPlotdata %>%
+         selectByDate(year = 2020),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Months", 
+       y = "Mixing Ratio (ppb)",
+       title = "Monthly Average H2S Mixing Ratio (ppb) in 2020") + 
+  scale_x_date(labels = date_format("%b"), breaks = "1 month") +
+  geom_point() +
+  geom_line() +
+  theme_classic() 
+  
+
+ggExtra::ggMarginal(MarginalPlot, margins = "y", groupColour = TRUE, groupFill = TRUE) 
+
+```
+
+## AMS 4 & 19 Monthly Average H2S Mixing Ratio 2020-2025
+
+```{r}
+setwd("C:/Users/culla/Documents/data")
+Year1Plot <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(date)) %>%
+  timeAverage(avg.time = "month",
+              type = "Station")
+
+ggplot(Year1Plot %>%
+         selectByDate(year = 2020:2024),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Years", 
+       y = "Mixing Ratio (ppb)",
+       title = "Monthly Average H2S Mixing Ratio (ppb) From 2020-2025") + 
+  scale_x_date(labels = date_format("%Y"), breaks = "1 year") +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+```
+
+## AMS 4 & 19 Yearly Average H2S Mixing Ratio 2020-2025
+
+```{r}
+setwd("C:/Users/culla/Documents/data")
+Year2Plot <- LongH2S %>%
+  separate(col = date, into = c("date", "Hour"), sep = " ") %>%
+  mutate(LongH2S, date = as.Date(date)) %>%
+  timeAverage(avg.time = "year",
+              type = "Station")
+
+ggplot(Year2Plot %>%
+         selectByDate(year = 2020:2024),
+       aes(x = date, y = H2SConc, colour = Station)) +
+  labs(x = "Years", 
+       y = "Mixing Ratio (ppb)",
+       title = "Yearly Average H2S Mixing Ratio (ppb) From 2020-2025") + 
+  scale_x_date(labels = date_format("%Y"), breaks = "1 year") +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+```
+
+## Bubble Plot of AMS 4 H2S Mixing Ratios Showing Fire Influence in 2020
+
+```{r}
+ #Forming An H2S conc and fire influence table
+setwd("C:/Users/culla/Documents/data")
+ StationMerge <- StationH2S %>%
+   separate(col = date, into = c("date", "hour"), sep = " ") %>%
+   selectByDate(year = 2020) %>%
+   unite(col = date,
+         c("date", "hour"),
+         sep = " ")
+ setwd("E:/")
+ FireData <- read_csv("2020AQData.csv") 
+ AQMerge <- rename(FireData, hour = Hour) %>%
+   mutate(hour = as.character(hour)) %>%
+   unite(col = date,
+         c("date", "hour"),
+         sep = " ")
+
+ MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
+  pivot_longer(cols = c("AMS 4", "AMS 19"),
+               names_to = "Station",
+               values_to = "H2SConc")
+
+#Bubble plot with fire influence 
+BubblePlot <- MergedData %>%
+  separate(col = date, into = c("date", "hour"), sep = " ") %>%
+  mutate(date = as.Date(date)) 
+
+ 
+ ggplot(BubblePlot, aes(x = date, y = H2SConc, size = Fire_Influence, colour = Station)) +
+   geom_point(alpha = 0.5)
+ 
+ print(BubblePlot)
+
+
+```
+
+## Monthly Average Fires in 2020
+
+```{r}
+setwd("E:/")
+FiresNumber <- FireData %>%
+  select(date, Number_of_Fires, Fire_Influence) %>%
+  mutate(date = as.Date(date)) %>%
+  timeAverage(avg.time = "month")
+
+ggplot(FiresNumber, aes(x = date, y = Number_of_Fires)) + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Months Of 2020", y = "Number Of Fires", title = "A Monthly Average Of The Number Of Fires in 2020")
+  theme_classic()
+```
+
+## Monthly Average Influencing Fires in 2020
+
+```{r}
+setwd("E:/")
+FiresWithInfluence <- FireData %>%
+    select(date, Number_of_Fires, Fire_Influence) %>%
+    filter(Fire_Influence == "Yes") %>%
+    mutate(date = as.Date(date)) %>%
+    timeAverage(avg.time = "month")
+
+ggplot(FiresWithInfluence, aes(x = date, y = Number_of_Fires)) + 
+  geom_point() +
+  geom_line() +
+  labs(x = "Months of 2020", y = "Number Of Fires With Influence", title = "A Monthly Average Of The Number Of Fires With Influence In 2020") +
+  theme_classic()
+```
+
+## Monthly Average Intercept Time of Fires in 2020
+
+``` {r}
+setwd("E:/")
+
+InterceptPlotA <- FireData %>%
+  select(c("date", "intercept_time")) %>%
+  mutate(date = as.Date(date)) %>%
+  timeAverage(avg.time = "month")
+
+ggplot(InterceptPlotA, aes(x = date, y = intercept_time))  +
+  geom_point() + 
+  geom_line() +
+  scale_y_reverse() +
+  labs(x = "Months of 2020",y = "Intercept Time (hr)", title = "Average Time of Interception For The Months Of 2020 ") +
+  theme_classic()
+```
+
+## Monthly Average Intercept Time of Influencing Fires in 2020
+
+``` {r}
+setwd("E:/")
+InterceptPlotB <- FireData %>%
+  select(c("date", "Fire_Influence", "intercept_time")) %>%
+  mutate(date = as.Date(date)) %>%
+  filter(Fire_Influence == 'Yes') %>%
+  timeAverage(avg.time = "month")
+
+ggplot(InterceptPlotB, aes(x = date, y = intercept_time))  +
+  geom_point() + 
+  geom_line() +
+  scale_y_reverse() +
+  labs(x = "Months of 2020",y = "Intercept Time (hr)", title = "Average Intercept Time of Fires With Influence For The Months Of 2020 ") +
+  theme_classic()
+```
+

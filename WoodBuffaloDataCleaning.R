@@ -54,6 +54,7 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
    pivot_longer(cols = -c("date"),
                 names_to = "Station",
                 values_to = "H2SConc") 
+<<<<<<< HEAD
 
 #Importing AirQuality Data for 2020
  setwd("E:/")
@@ -65,6 +66,19 @@ FireData <- read_csv("2020AQData.csv")
 
 
  
+=======
+  
+ 
+          
+#Importing Fire Data
+ setwd("E:/")
+FIreData <- read_csv("2020AQData.csv")
+
+
+
+
+
+>>>>>>> 8b59077efc8faaff77b9e21b28280335880f1976
  
 
  
