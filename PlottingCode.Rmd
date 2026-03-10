@@ -206,3 +206,52 @@ ggplot(InterceptPlotB, aes(x = date, y = intercept_time))  +
   theme_classic()
 ```
 
+## Monthly Average AMS 4 H2S From Dates With Wildfire Influence 2020
+
+```{r warning=FALSE}
+YesPlot <- MergedData %>%
+  separate(col = date, into = c("date", "hour"), sep = " ") %>%
+  mutate(date = as.Date(date)) %>%
+  filter(Fire_Influence == 'Yes') %>%
+  timeAverage(avg.time = "month")
+
+ggplot(YesPlot, aes(x = date, y = H2SConc)) +
+  geom_point() +
+  labs(x = "2020", y = "H2S Mixing Ratio (ppb)", title = "H2S (ppb) Affected By Wildfires Throughout 2020") +
+  geom_line() +
+  theme_classic()
+
+```
+
+## Monthly Average H2S Influenced By Wildfires Vs. Monthly Average H2S Not Influenced By Wildfires
+
+``` {r}
+H2SVsPlot <- MergedData %>%
+  select(day, Fire_Influence, H2SConc) %>%
+  rename(date = day) %>%
+  mutate(date = as.Date(date)) %>%
+  timeAverage(avg.time = "month",
+              type = "Fire_Influence") %>%
+  pivot_wider(names_from = Fire_Influence,
+              values_from = H2SConc) %>%
+  rename(Influenced = Yes,
+         Not_Influenced = No) %>%
+  mutate(date = as.character(date)) %>%
+  mutate(season = case_when(date == "2020-01-01" ~ "Winter",
+                            date == "2020-02-01" ~ "Winter",
+                            date == "2020-03-01" ~ "Spring",
+                            date == "2020-04-01" ~ "Spring",
+                            date == "2020-05-01" ~ "Spring",
+                            date == "2020-06-01" ~ "Summer",
+                            date == "2020-07-01" ~ "Summer",
+                            date == "2020-08-01" ~ "Summer",
+                            date == "2020-09-01" ~ "Autumn",
+                            date == "2020-10-01" ~ "Autumn",
+                            date == "2020-11-01" ~ "Autumn",
+                            date == "2020-12-01" ~ "Winter"))
+
+ggplot(H2SVsPlot, aes(x = Not_Influenced, y = Influenced, colour = season, size = season)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1) +
+  theme_classic()
+```

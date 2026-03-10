@@ -54,36 +54,35 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
    pivot_longer(cols = -c("date"),
                 names_to = "Station",
                 values_to = "H2SConc") 
-<<<<<<< HEAD
 
 #Importing AirQuality Data for 2020
  setwd("E:/")
-FireData <- read_csv("2020AQData.csv") 
+ FireData <- read_csv("2020AQData.csv") %>%
+   select(-`...1`)
 
 
- 
- 
+#Forming An H2S conc and fire influence table
+setwd("C:/Users/culla/Documents/data")
+StationMerge <- StationH2S %>%
+  separate(col = date, into = c("date", "hour"), sep = " ") %>%
+  selectByDate(year = 2020) %>%
+  unite(col = date,
+        c("date", "hour"),
+        sep = " ") %>%
+  select(-`AMS 19`)
+setwd("E:\ ")
+AQMerge <- rename(FireData, hour = Hour) %>%
+  mutate(hour = as.character(hour)) %>%
+  unite(col = date,
+        c("date", "hour"),
+        sep = " ") 
 
+MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
+  pivot_longer(cols = "AMS 4",
+               names_to = "Station",
+               values_to = "H2SConc") %>%
+  select(-"Station")
 
- 
-=======
-  
- 
-          
-#Importing Fire Data
- setwd("E:/")
-FIreData <- read_csv("2020AQData.csv")
-
-
-
-
-
->>>>>>> 8b59077efc8faaff77b9e21b28280335880f1976
- 
-
- 
- 
- 
  
  
  
