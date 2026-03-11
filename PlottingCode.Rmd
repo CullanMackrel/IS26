@@ -255,3 +255,67 @@ ggplot(H2SVsPlot, aes(x = Not_Influenced, y = Influenced, colour = season, size 
   geom_abline(intercept = 0, slope = 1) +
   theme_classic()
 ```
+
+## Violin of H2S With And Without Fire Influence in 2020
+
+``` {r }
+
+Violin <- MergedData %>%
+  select(Fire_Influence, H2SConc) %>%
+  rename(Influence = Fire_Influence)
+Q1 <- quantile(Violin$H2SConc, 0.25, na.rm = TRUE)
+Q3 <- quantile(Violin$H2SConc, 0.75, na.rm = TRUE)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+CleanViolin <- subset(Violin, Violin$H2SConc >= lower_bound & Violin$H2SConc <= upper_bound)
+
+sample_size = CleanViolin %>% 
+  group_by(Influence) %>% 
+  summarize(num=n())
+
+CleanViolin <- CleanViolin %>%
+  left_join(sample_size) %>%
+  mutate(myaxis = paste0(Influence, "\n", "n=", num)) 
+
+
+ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
+  geom_violin() +
+  labs(x = "Influenced By Wildfires?", y = "H2S Mixing Ratio (ppb)",
+       title = "Distribution of Hydrogen Sulfide Measurements Depending On Fire Influence") +
+  theme_classic()
+  
+
+
+
+```
+
+### Adding Boxplots to the previous Violin plot
+
+``` {r}
+Violin <- MergedData %>%
+  select(Fire_Influence, H2SConc) %>%
+  rename(Influence = Fire_Influence)
+Q1 <- quantile(Violin$H2SConc, 0.25, na.rm = TRUE)
+Q3 <- quantile(Violin$H2SConc, 0.75, na.rm = TRUE)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+CleanViolin <- subset(Violin, Violin$H2SConc >= lower_bound & Violin$H2SConc <= upper_bound)
+
+sample_size = CleanViolin %>% 
+  group_by(Influence) %>% 
+  summarize(num=n())
+
+CleanViolin <- CleanViolin %>%
+  left_join(sample_size) %>%
+  mutate(myaxis = paste0(Influence, "\n", "n=", num)) 
+
+ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
+  geom_violin() +
+  geom_boxplot(width = 0.3, colour = "black", alpha = 0.2) +
+  labs(x = "Influenced By Fires?", y = "H2S Mixing Ratio (ppb)", 
+       title = "Distribution of Hydrogen Sulfide Measurements Depending On Fire Influence") +
+  theme_classic()
+  
+```
