@@ -261,7 +261,7 @@ ggplot(H2SVsPlot, aes(x = Not_Influenced, y = Influenced, colour = season, size 
 ``` {r }
 
 Violin <- MergedData %>%
-  select(Fire_Influence, H2SConc) %>%
+  select(date, Fire_Influence, H2SConc) %>%
   rename(Influence = Fire_Influence)
 Q1 <- quantile(Violin$H2SConc, 0.25, na.rm = TRUE)
 Q3 <- quantile(Violin$H2SConc, 0.75, na.rm = TRUE)
@@ -318,4 +318,16 @@ ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
        title = "Distribution of Hydrogen Sulfide Measurements Depending On Fire Influence") +
   theme_classic()
   
+```
+
+
+```{r}
+CleanViolin <- selectByDate(CleanViolin, month = 5:9)
+  
+
+ggplot(na.omit(CleanViolin), aes(x = Influence, y = H2SConc, fill = Influence)) +
+  geom_violin() +
+  labs(x = "Influenced By Wildfires?", y = "H2S Mixing Ratio (ppb)",
+       title = "Distribution of Hydrogen Sulfide Measurements Depending On Fire Influence") +
+  theme_classic()
 ```
