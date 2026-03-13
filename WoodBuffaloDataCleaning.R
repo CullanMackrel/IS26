@@ -85,7 +85,9 @@ MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
 
  
  
- 
+#Wood Buffalo Meteorological data cleaning
+Meteor <- read_csv("WBEAMeteor.csv", skip = 1, n_max = 8761) 
+
  
  
  
