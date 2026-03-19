@@ -8,13 +8,25 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Necessary Libraries
+``` {r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(devtools)
+library(splitr)
+library(openair)
+library(withr)
+library(readr)
+library(lubridate)
+library(scales)
+```
 
-## AMS 4 & 19 H2S Mixing Ratio by month in 2020
+## H2S Over Time. Scatter Plot. Monthly Average, 2020, AMS 4 & AMS 19
 
 ```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
 MonthPlot <- LongH2S %>%
- 
 mutate(LongH2S, date = as.Date(LongH2S$date)) %>%
 timeAverage(avg.time = "month",
             type = "Station")
@@ -29,9 +41,9 @@ ggplot(MonthPlot %>%
   theme_classic() 
 ```
 
-## AMS 4 & 19 Marginal Plot of H2S Mixing Ratio by month in 2020
+## H2S Over Time. Marginal Plot. Monthly Average, 2020, AMS 4 & AMS 19, Marginal
 
-```{r}
+```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
 MarginalPlotdata <- LongH2S %>%
   separate(col = date, into = c("date", "Hour"), sep = " ") %>%
@@ -55,9 +67,9 @@ ggExtra::ggMarginal(MarginalPlot, margins = "y", groupColour = TRUE, groupFill =
 
 ```
 
-## AMS 4 & 19 Monthly Average H2S Mixing Ratio 2020-2025
+## H2S Over Time. Scatter Plot. Monthly Average, 2020-2025, AMS 4 & Ams 19
 
-```{r}
+```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
 Year1Plot <- LongH2S %>%
   separate(col = date, into = c("date", "Hour"), sep = " ") %>%
@@ -77,9 +89,9 @@ ggplot(Year1Plot %>%
   theme_classic()
 ```
 
-## AMS 4 & 19 Yearly Average H2S Mixing Ratio 2020-2025
+## H2S Over Time. Scatter Plot. Yearly Average, 2020-2025, AMS 4 & 19
 
-```{r}
+```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
 Year2Plot <- LongH2S %>%
   separate(col = date, into = c("date", "Hour"), sep = " ") %>%
@@ -99,9 +111,9 @@ ggplot(Year2Plot %>%
   theme_classic()
 ```
 
-## Bubble Plot of AMS 4 H2S Mixing Ratios Showing Fire Influence in 2020
+## H2S Over Time. Bubble Plot. 2020, Showing Fire Influence, AMS 4
 
-```{r}
+```{r warning=FALSE}
  #Forming An H2S conc and fire influence table
 setwd("C:/Users/culla/Documents/data")
  StationMerge <- StationH2S %>%
@@ -130,16 +142,19 @@ BubblePlot <- MergedData %>%
 
  
  ggplot(BubblePlot, aes(x = date, y = H2SConc, size = Fire_Influence, colour = Station)) +
-   geom_point(alpha = 0.5)
+   geom_point(alpha = 0.5) +
+   theme_classic() +
+   labs(x = "2020", y = "H2S Mixing Ratio (ppb)", title = "Hydrogen Sulfide From Different Stations Throughout 2020", size = "Influenced By Wildfires?")
+   
  
  print(BubblePlot)
 
 
 ```
 
-## Monthly Average Fires in 2020
+## Number Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
-```{r}
+```{r warning=FALSE}
 setwd("E:/")
 FiresNumber <- FireData %>%
   select(date, Number_of_Fires, Fire_Influence) %>%
@@ -153,9 +168,9 @@ ggplot(FiresNumber, aes(x = date, y = Number_of_Fires)) +
   theme_classic()
 ```
 
-## Monthly Average Influencing Fires in 2020
+## Number Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
-```{r}
+```{r warning=FALSE}
 setwd("E:/")
 FiresWithInfluence <- FireData %>%
     select(date, Number_of_Fires, Fire_Influence) %>%
@@ -170,9 +185,9 @@ ggplot(FiresWithInfluence, aes(x = date, y = Number_of_Fires)) +
   theme_classic()
 ```
 
-## Monthly Average Intercept Time of Fires in 2020
+## Intercept Time Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
-``` {r}
+``` {r warning=FALSE}
 setwd("E:/")
 
 InterceptPlotA <- FireData %>%
@@ -188,9 +203,9 @@ ggplot(InterceptPlotA, aes(x = date, y = intercept_time))  +
   theme_classic()
 ```
 
-## Monthly Average Intercept Time of Influencing Fires in 2020
+## Intercept Time Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
-``` {r}
+``` {r warning=FALSE}
 setwd("E:/")
 InterceptPlotB <- FireData %>%
   select(c("date", "Fire_Influence", "intercept_time")) %>%
@@ -206,7 +221,7 @@ ggplot(InterceptPlotB, aes(x = date, y = intercept_time))  +
   theme_classic()
 ```
 
-## Monthly Average AMS 4 H2S From Dates With Wildfire Influence 2020
+## H2S Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ```{r warning=FALSE}
 YesPlot <- MergedData %>%
@@ -223,9 +238,25 @@ ggplot(YesPlot, aes(x = date, y = H2SConc)) +
 
 ```
 
-## Monthly Average H2S Influenced By Wildfires Vs. Monthly Average H2S Not Influenced By Wildfires
+## H2S Not Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+```{r warning=FALSE}
+NoPlot <- MergedData %>%
+  separate(col = date, into = c("date", "hour"), sep = " ") %>%
+  mutate(date = as.Date(date)) %>%
+  filter(Fire_Influence == 'No') %>%
+  timeAverage(avg.time = "month")
 
-``` {r}
+ggplot(NoPlot, aes(x = date, y = H2SConc)) +
+  geom_point() +
+  labs(x = "2020", y = "H2S Mixing Ratio (ppb)", title = "H2S (ppb) Measurements Without Wildfire Influence Throughout 2020") +
+  geom_line() +
+  theme_classic()
+
+```
+
+## H2S Influenced By Fires Over H2S Not Influenced By Fires. Scatter Plot. Monthly Average, Coloured By Season, 2020, AMS 4
+
+``` {r warning=FALSE}
 H2SVsPlot <- MergedData %>%
   select(day, Fire_Influence, H2SConc) %>%
   rename(date = day) %>%
@@ -256,9 +287,9 @@ ggplot(H2SVsPlot, aes(x = Not_Influenced, y = Influenced, colour = season, size 
   theme_classic()
 ```
 
-## Violin of H2S With And Without Fire Influence in 2020
+## H2S Distribution With And Without Fire Influence. Violin Plot. No Time Average, 2020, AMS 4, Outliers Removed
 
-``` {r }
+``` {r warning=FALSE}
 
 Violin <- MergedData %>%
   select(date, Fire_Influence, H2SConc) %>%
@@ -292,7 +323,7 @@ ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
 
 ### Adding Boxplots to the previous Violin plot
 
-``` {r}
+``` {r warning=FALSE}
 Violin <- MergedData %>%
   select(Fire_Influence, H2SConc) %>%
   rename(Influence = Fire_Influence)
@@ -320,8 +351,29 @@ ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
   
 ```
 
+## H2S Distribution With And Without Fire Influence. Violin Plot. 2020 Wildfire Season (May-Sep), AMS 4, Outliers Removed
+```{r warning=FALSE}
 
-```{r}
+Violin <- MergedData %>%
+  select(date, Fire_Influence, H2SConc) %>%
+  rename(Influence = Fire_Influence)
+Q1 <- quantile(Violin$H2SConc, 0.25, na.rm = TRUE)
+Q3 <- quantile(Violin$H2SConc, 0.75, na.rm = TRUE)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+CleanViolin <- subset(Violin, Violin$H2SConc >= lower_bound & Violin$H2SConc <= upper_bound)
+
+sample_size = CleanViolin %>% 
+  group_by(Influence) %>% 
+  summarize(num=n())
+
+CleanViolin <- CleanViolin %>%
+  left_join(sample_size) %>%
+  mutate(myaxis = paste0(Influence, "\n", "n=", num)) 
+
+
+
 CleanViolin <- selectByDate(CleanViolin, month = 5:9)
   
 
@@ -331,3 +383,9 @@ ggplot(na.omit(CleanViolin), aes(x = Influence, y = H2SConc, fill = Influence)) 
        title = "Distribution of Hydrogen Sulfide Measurements Depending On Fire Influence") +
   theme_classic()
 ```
+
+
+```{r warning=FALSE}
+Speed <- CleanMeteor %>%
+  
+

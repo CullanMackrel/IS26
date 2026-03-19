@@ -88,6 +88,64 @@ MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
 #Wood Buffalo Meteorological data cleaning
 Meteor <- read_csv("WBEAMeteor.csv", skip = 1, n_max = 8761) 
 
- 
- 
+  CleanMeteor <- Meteor %>%
+    clean_names() %>%
+    separate(col = x1,
+             into = c("date", "Hour"),
+             sep = " ") %>%
+    slice(-1) %>%
+    mutate(date = paste(as.character(date), Hour, sep = " "),
+           date = as.POSIXct(date, format = "%Y-%m-%d %H", tz = "MST"),
+           date = with_tz(date, tz = "UTC")) %>%
+    select(-"Hour") %>%
+    mutate(across(where(is.character), as.numeric)) %>%
+    slice(-(1:4)) %>%
+    rename(AT2 = ams_4_2,
+           PM2.5 = ams_4_3,
+           SO2 = ams_4_4,
+           WindDirection = ams_4_5,
+           WindSpeed = ams_4_6) %>%
+    select(c("date", "AT2", "PM2.5", "SO2", "WindDirection", "WindSpeed")) %>%
+    timeAverage(avg.time = "6 hour") %>%
+    separate(col = date,
+             into = c("date", "Hour"),
+             sep = " ") %>%
+      mutate(Hour = replace_na(Hour, "00:00:00"), 
+             Hour = case_when(Hour == "00:00:00" ~ 00,
+                              Hour == "06:00:00" ~ 06,
+                              Hour == "12:00:00" ~ 12,
+                              Hour == "18:00:00" ~ 18,
+                              Hour == "07:00:00" ~ 06,
+                              Hour == "13:00:00" ~ 12,
+                              Hour == "19:00:00" ~ 18,
+                              Hour == "01:00:00" ~ 00)) %>%
+      mutate(date = as.POSIXct(date, format = "%Y-%m-%d")) %>%
+      unite(col = date,
+            c("date","Hour"),
+            sep = " ") 
+  
+# Merging All Data Sets
+  
+  Merge <- FireDataAMS4 %>%
+    unite(col = date,
+          c("date", "Hour"),
+          sep = " ") %>%
+    select(-c("bop", "day")) %>%
+    slice(-(1:2)) 
+    
+  
+  Merge2 <- CleanMeteor 
+    
+  
+  AirData <- left_join(Merge2, Merge, by = "date") %>%
+    separate(col = date,
+             into = c("date", "Hour"),
+             sep = " ")
+  
+  Merge3 <- StationMerge %>%
+    slice(-(1:2)) %>%
+    select("date", "AMS 4")
+    
+    
+    
  
