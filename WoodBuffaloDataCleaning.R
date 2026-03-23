@@ -1,5 +1,5 @@
 #Importing Wood Buffalo Data
-setwd("C:/Users/culla/Documents/data")
+setwd("C:/Users/culla/Documents/data") 
 WBH2S <- read_csv("WBH2S(Data).csv") 
 
 #Cleaning up data
@@ -86,6 +86,7 @@ MergedData <- left_join(StationMerge, AQMerge, by = "date") %>%
  
  
 #Wood Buffalo Meteorological data cleaning
+setwd("C:/Users/culla/Documents/data")
 Meteor <- read_csv("WBEAMeteor.csv", skip = 1, n_max = 8761) 
 
   CleanMeteor <- Meteor %>%
@@ -145,8 +146,13 @@ Meteor <- read_csv("WBEAMeteor.csv", skip = 1, n_max = 8761)
     rename(H2SConc = "AMS 4") %>%
     separate(col = date,
              into = c("date", "Hour"),
-             sep = " ")
-    
-    
-    
+             sep = " ") %>%
+    slice(-(1461:1462))
+
+  
+  
+  
+  
+  
+
  

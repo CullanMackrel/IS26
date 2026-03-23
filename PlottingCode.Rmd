@@ -111,7 +111,7 @@ ggplot(Year2Plot %>%
   theme_classic()
 ```
 
-## H2S Over Time. Bubble Plot. 2020, Showing Fire Influence, AMS 4
+## H2S Over Time. Bubble Plot. 2020, Showing Fire Influence, AMS 4 & 19
 
 ```{r warning=FALSE}
  #Forming An H2S conc and fire influence table
@@ -152,20 +152,29 @@ BubblePlot <- MergedData %>%
 
 ```
 
-## Number Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
-
+## H2S Over Time. Scatter Plot. 2020, Showing Fire Influence AMS 4
 ```{r warning=FALSE}
-setwd("E:/")
-FiresNumber <- FireData %>%
-  select(date, Number_of_Fires, Fire_Influence) %>%
-  mutate(date = as.Date(date)) %>%
-  timeAverage(avg.time = "month")
+ BubbleMerge <- StationH2S %>%
+   mutate(date = paste(as.character(date)),
+          date = as.POSIXct(date, format = "%Y-%m-%d %H")) %>%
+   selectByDate(year = 2020) %>%
+   select(date, `AMS 4`)
+   
+  FireMerge <- FireDataAMS4 %>%
+    unite(col = date,
+          c("date", "Hour"),
+          sep = " ") %>% 
+    mutate(date = paste(as.character(date)),
+           date = as.POSIXct(date, format = "%Y-%m-%d %H")) %>%
+    select(date, Fire_Influence)
 
-ggplot(FiresNumber, aes(x = date, y = Number_of_Fires)) + 
-  geom_point() + 
-  geom_line() + 
-  labs(x = "Months Of 2020", y = "Number Of Fires", title = "A Monthly Average Of The Number Of Fires in 2020")
-  theme_classic()
+  BubblePlot <- left_join(BubbleMerge, FireMerge, by = "date")  
+  
+  ggplot(BubblePlot, aes(x = date, y = `AMS 4`, colour = Fire_Influence)) + 
+    geom_point() +
+    labs(x = "2020", y = "H2S Mixing Ratio (ppb)", colour = "Fire Influence") +
+    theme_classic()
+
 ```
 
 ## Number Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
@@ -384,8 +393,8 @@ ggplot(na.omit(CleanViolin), aes(x = Influence, y = H2SConc, fill = Influence)) 
   theme_classic()
 ```
 
-
+## Pollutants Over
 ```{r warning=FALSE}
-Speed <- CleanMeteor %>%
-  
+Pollutant <- AllData %>%
+  select(date, H2SConc, PM2.5, SO2)
 
