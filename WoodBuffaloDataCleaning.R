@@ -133,18 +133,19 @@ Meteor <- read_csv("WBEAMeteor.csv", skip = 1, n_max = 8761)
     select(-c("bop", "day")) %>%
     slice(-(1:2)) 
     
-  
-  Merge2 <- CleanMeteor 
+   Merge2 <- CleanMeteor 
     
-  
-  AirData <- left_join(Merge2, Merge, by = "date") %>%
-    separate(col = date,
-             into = c("date", "Hour"),
-             sep = " ")
+   AirData <- left_join(Merge2, Merge, by = "date") 
   
   Merge3 <- StationMerge %>%
     slice(-(1:2)) %>%
     select("date", "AMS 4")
+
+  AllData <- left_join(Merge3, AirData, by = "date") %>%
+    rename(H2SConc = "AMS 4") %>%
+    separate(col = date,
+             into = c("date", "Hour"),
+             sep = " ")
     
     
     
