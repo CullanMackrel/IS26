@@ -4,8 +4,8 @@ WBH2S <- read_csv("WBH2S(Data).csv")
 
 #Cleaning up data
 WBH2S <- read_csv("WBH2S(Data).csv", skip = 1, n_max = 227954) 
- StdWBH2S <- WBH2S %>%
-  mutate( "date" = WBH2S$...1) %>%
+ StdWBH2S <- WBH2S 
+   mutate(StdWBH2S, "date" = WBH2S$...1) %>%
    slice(-1) %>%
  select(-`...1`) %>%
   mutate(across(.cols = starts_with("AMS"), ~ replace(., . == 'Z', 0))) %>%
