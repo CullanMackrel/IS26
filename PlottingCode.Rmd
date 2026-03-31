@@ -153,6 +153,7 @@ BubblePlot <- MergedData %>%
 ```
 
 ## H2S Over Time. Scatter Plot. 2020, Showing Fire Influence AMS 4
+
 ```{r warning=FALSE}
  BubbleMerge <- StationH2S %>%
    mutate(date = paste(as.character(date)),
@@ -175,6 +176,21 @@ BubblePlot <- MergedData %>%
     labs(x = "2020", y = "H2S Mixing Ratio (ppb)", colour = "Fire Influence") +
     theme_classic()
 
+```
+
+## Number Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+
+``` {r warning =FALSE}
+FireNum <- FireDataAMS4 %>%
+    select(date, Number_of_Fires) %>%
+    mutate(date = as.Date(date)) %>%
+    timeAverage(avg.time = "month")
+  
+  ggplot(FireNum, aes(x = date, y = Number_of_Fires)) +
+    geom_point() + 
+    geom_line() + 
+    labs(x = "2020", y = "Average Number Of Fires", title = "A Monthly Average Of The Number Of Fires In 2020")
+    theme_classic()
 ```
 
 ## Number Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
