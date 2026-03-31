@@ -20,6 +20,7 @@ library(withr)
 library(readr)
 library(lubridate)
 library(scales)
+library(janitor)
 ```
 
 ## H2S Over Time. Scatter Plot. Monthly Average, 2020, AMS 4 & AMS 19
