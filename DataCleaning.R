@@ -57,7 +57,7 @@ select( -c(`...27`, `...28`,`Wood Buffalo Environmental Association - Continuous
 
 #Importing AirQuality Data for 2020
  setwd("E:/")
- FireDataAMS4 <- read_csv("2020AQData.csv") %>%
+ FireData <- read_csv("2020AQData.csv") %>%
    select(-`...1`)
 
 
