@@ -23,7 +23,7 @@ library(scales)
 library(janitor)
 ```
 
-## H2S Over Time. Scatter Plot. Monthly Average, 2020, AMS 4 & AMS 19
+## Figure 1: H2S Over Time. Scatter Plot. Monthly Average, 2020, AMS 4 & AMS 19
 
 ```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
@@ -42,7 +42,7 @@ ggplot(MonthPlot %>%
   theme_classic() 
 ```
 
-## H2S Over Time. Marginal Plot. Monthly Average, 2020, AMS 4 & AMS 19, Marginal
+## Figure 2: H2S Over Time. Marginal Plot. Monthly Average, 2020, AMS 4 & AMS 19, Marginal
 
 ```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
@@ -68,7 +68,7 @@ ggExtra::ggMarginal(MarginalPlot, margins = "y", groupColour = TRUE, groupFill =
 
 ```
 
-## H2S Over Time. Scatter Plot. Monthly Average, 2020-2025, AMS 4 & Ams 19
+## Figure 3: H2S Over Time. Scatter Plot. Monthly Average, 2020-2025, AMS 4 & Ams 19
 
 ```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
@@ -90,7 +90,7 @@ ggplot(Year1Plot %>%
   theme_classic()
 ```
 
-## H2S Over Time. Scatter Plot. Yearly Average, 2020-2025, AMS 4 & 19
+## Figure 4: H2S Over Time. Scatter Plot. Yearly Average, 2020-2025, AMS 4 & 19
 
 ```{r warning=FALSE}
 setwd("C:/Users/culla/Documents/data")
@@ -112,7 +112,7 @@ ggplot(Year2Plot %>%
   theme_classic()
 ```
 
-## H2S Over Time. Bubble Plot. 2020, Showing Fire Influence, AMS 4 & 19
+## Figure 5: H2S Over Time. Bubble Plot. 2020, Showing Fire Influence, AMS 4 & 19
 
 ```{r warning=FALSE}
  #Forming An H2S conc and fire influence table
@@ -124,8 +124,8 @@ setwd("C:/Users/culla/Documents/data")
          c("date", "hour"),
          sep = " ")
  setwd("E:/")
- FireData <- read_csv("2020AQData.csv") 
- AQMerge <- rename(FireData, hour = Hour) %>%
+ FireDataAMS4 <- read_csv("2020AQData.csv") 
+ AQMerge <- rename(FireDataAMS4, hour = Hour) %>%
    mutate(hour = as.character(hour)) %>%
    unite(col = date,
          c("date", "hour"),
@@ -153,7 +153,7 @@ BubblePlot <- MergedData %>%
 
 ```
 
-## H2S Over Time. Scatter Plot. 2020, Showing Fire Influence AMS 4
+## Figure 6: H2S Over Time. Scatter Plot. 2020, Showing Fire Influence AMS 4
 
 ```{r warning=FALSE}
  BubbleMerge <- StationH2S %>%
@@ -179,7 +179,7 @@ BubblePlot <- MergedData %>%
 
 ```
 
-## Number Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 7: Number Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ``` {r warning =FALSE}
 FireNum <- FireDataAMS4 %>%
@@ -194,11 +194,11 @@ FireNum <- FireDataAMS4 %>%
     theme_classic()
 ```
 
-## Number Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 8: Number Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ```{r warning=FALSE}
 setwd("E:/")
-FiresWithInfluence <- FireData %>%
+FiresWithInfluence <- FireDataAMS4 %>%
     select(date, Number_of_Fires, Fire_Influence) %>%
     filter(Fire_Influence == "Yes") %>%
     mutate(date = as.Date(date)) %>%
@@ -211,12 +211,12 @@ ggplot(FiresWithInfluence, aes(x = date, y = Number_of_Fires)) +
   theme_classic()
 ```
 
-## Intercept Time Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 9: Intercept Time Of Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ``` {r warning=FALSE}
 setwd("E:/")
 
-InterceptPlotA <- FireData %>%
+InterceptPlotA <- FireDataAMS4 %>%
   select(c("date", "intercept_time")) %>%
   mutate(date = as.Date(date)) %>%
   timeAverage(avg.time = "month")
@@ -229,11 +229,11 @@ ggplot(InterceptPlotA, aes(x = date, y = intercept_time))  +
   theme_classic()
 ```
 
-## Intercept Time Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 10: Intercept Time Of Influencing Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ``` {r warning=FALSE}
 setwd("E:/")
-InterceptPlotB <- FireData %>%
+InterceptPlotB <- FireDataAMS4 %>%
   select(c("date", "Fire_Influence", "intercept_time")) %>%
   mutate(date = as.Date(date)) %>%
   filter(Fire_Influence == 'Yes') %>%
@@ -247,7 +247,7 @@ ggplot(InterceptPlotB, aes(x = date, y = intercept_time))  +
   theme_classic()
 ```
 
-## H2S Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 11: H2S Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 
 ```{r warning=FALSE}
 YesPlot <- MergedData %>%
@@ -264,7 +264,7 @@ ggplot(YesPlot, aes(x = date, y = H2SConc)) +
 
 ```
 
-## H2S Not Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
+## Figure 12: H2S Not Influenced By Fires Over Time. Scatter Plot. Monthly Average, 2020, AMS 4
 ```{r warning=FALSE}
 NoPlot <- MergedData %>%
   separate(col = date, into = c("date", "hour"), sep = " ") %>%
@@ -280,7 +280,7 @@ ggplot(NoPlot, aes(x = date, y = H2SConc)) +
 
 ```
 
-## H2S Influenced By Fires Over H2S Not Influenced By Fires. Scatter Plot. Monthly Average, Coloured By Season, 2020, AMS 4
+## Figure 13: H2S Influenced By Fires Over H2S Not Influenced By Fires. Scatter Plot. Monthly Average, Coloured By Season, 2020, AMS 4
 
 ``` {r warning=FALSE}
 H2SVsPlot <- MergedData %>%
@@ -313,7 +313,7 @@ ggplot(H2SVsPlot, aes(x = Not_Influenced, y = Influenced, colour = season, size 
   theme_classic()
 ```
 
-## H2S Distribution With And Without Fire Influence. Violin Plot. No Time Average, 2020, AMS 4, Outliers Removed
+## Figure 14: H2S Distribution With And Without Fire Influence. Violin Plot. No Time Average, 2020, AMS 4, Outliers Removed
 
 ``` {r warning=FALSE}
 
@@ -347,7 +347,7 @@ ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
 
 ```
 
-### Adding Boxplots to the previous Violin plot
+### Figure 15: Adding Boxplots to the previous Violin plot
 
 ``` {r warning=FALSE}
 Violin <- MergedData %>%
@@ -377,7 +377,7 @@ ggplot(na.omit(CleanViolin), aes(x = myaxis, y = H2SConc, fill = Influence)) +
   
 ```
 
-## H2S Distribution With And Without Fire Influence. Violin Plot. 2020 Wildfire Season (May-Sep), AMS 4, Outliers Removed
+## Figure 16: H2S Distribution With And Without Fire Influence. Violin Plot. 2020 Wildfire Season (May-Sep), AMS 4, Outliers Removed
 ```{r warning=FALSE}
 
 Violin <- MergedData %>%
@@ -410,8 +410,6 @@ ggplot(na.omit(CleanViolin), aes(x = Influence, y = H2SConc, fill = Influence)) 
   theme_classic()
 ```
 
-## Pollutants Over
-```{r warning=FALSE}
-Pollutant <- AllData %>%
-  select(date, H2SConc, PM2.5, SO2)
+
+
 
